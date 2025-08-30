@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WorkoutCard } from '@/components/WorkoutCard';
 import { RestTimer } from '@/components/RestTimer';
+import { WorkoutLogger } from '@/components/WorkoutLogger';
+import { ProgressTracker } from '@/components/ProgressTracker';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('calendar');
@@ -169,29 +171,11 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="workout" className="mt-6">
-            <div className="text-center py-12">
-              <Dumbbell className="h-16 w-16 text-primary mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Workout Logging</h3>
-              <p className="text-muted-foreground mb-4">
-                Connect to Supabase to enable workout logging and data persistence.
-              </p>
-              <Badge variant="outline" className="text-primary border-primary">
-                Backend Required
-              </Badge>
-            </div>
+            <WorkoutLogger />
           </TabsContent>
 
           <TabsContent value="progress" className="mt-6">
-            <div className="text-center py-12">
-              <TrendingUp className="h-16 w-16 text-success mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Progress Tracking</h3>
-              <p className="text-muted-foreground mb-4">
-                Connect to Supabase to view detailed progress charts and analytics.
-              </p>
-              <Badge variant="outline" className="text-success border-success">
-                Charts Coming Soon
-              </Badge>
-            </div>
+            <ProgressTracker />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
