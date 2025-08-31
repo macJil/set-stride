@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Custom gradient backgrounds for specific sections */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}

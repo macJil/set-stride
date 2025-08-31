@@ -3,11 +3,12 @@ import { TrendingUp, Award, Calendar, Dumbbell, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useWorkout } from '@/contexts/WorkoutContext';
 
 interface WorkoutData {
   name: string;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime?: Date;
   exercises: any[];
   completedSets: number;
 }
@@ -22,7 +23,7 @@ interface ProgressStats {
 }
 
 export const ProgressTracker: React.FC = () => {
-  const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
+  const { state } = useWorkout();
   const [stats, setStats] = useState<ProgressStats>({
     totalWorkouts: 0,
     totalSets: 0,
@@ -33,15 +34,24 @@ export const ProgressTracker: React.FC = () => {
   });
 
   useEffect(() => {
-    // Load workouts from localStorage
-    const savedWorkouts = JSON.parse(localStorage.getItem('workouts') || '[]');
-    setWorkouts(savedWorkouts);
-
+    // Get all workouts from the workout context
+    const allWorkouts = Object.values(state.workoutHistory).flat();
+    
     // Calculate statistics
-    if (savedWorkouts.length > 0) {
-      calculateStats(savedWorkouts);
+    if (allWorkouts.length > 0) {
+      calculateStats(allWorkouts);
+    } else {
+      // Reset stats if no workouts
+      setStats({
+        totalWorkouts: 0,
+        totalSets: 0,
+        totalVolume: 0,
+        avgDuration: 0,
+        streak: 0,
+        personalRecords: []
+      });
     }
-  }, []);
+  }, [state.workoutHistory]);
 
   const calculateStats = (workoutData: WorkoutData[]) => {
     const totalWorkouts = workoutData.length;
@@ -130,15 +140,17 @@ export const ProgressTracker: React.FC = () => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     
-    return workouts.filter(workout => 
-      new Date(workout.startTime) > oneWeekAgo
+    const allWorkouts = Object.values(state.workoutHistory).flat();
+    return allWorkouts.filter(workout => 
+      workout.startTime > oneWeekAgo
     );
   };
 
   const getMuscleGroupVolume = () => {
     const muscleGroups: { [key: string]: number } = {};
+    const allWorkouts = Object.values(state.workoutHistory).flat();
     
-    workouts.forEach(workout => {
+    allWorkouts.forEach(workout => {
       workout.exercises?.forEach(exercise => {
         const muscleGroup = exercise.exercise.muscleGroup;
         let volume = 0;
